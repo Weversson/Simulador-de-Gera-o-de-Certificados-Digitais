@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: certforge-db
+    environment:
+      POSTGRES_USER: cert
+      POSTGRES_PASSWORD: cert
+      POSTGRES_DB: certdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cert -d certdb"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build: .
+    image: certforge:latest
+    container_name: certforge-web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: postgresql+psycopg2://cert:cert@db:5432/certdb
+    ports:
+      - "8000:8000"
+
+  cli:
+    build: .
+    image: certforge:latest
+    profiles: ["cli"]
+    entrypoint: ["python", "gerar_certificado.py", "--saida", "/out"]
+    volumes:
+      - ./saida:/out
+
+volumes:
+  pgdata:

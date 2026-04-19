@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ICP-Brasil · Cert Forge</title>
+<link rel="stylesheet" href="/static/style.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">◈</div>
+    <div>
+      <h1>CERT<span>FORGE</span></h1>
+      <small>ICP-Brasil · simulação didática</small>
+    </div>
+  </div>
+  <div class="status">
+    <span class="dot"></span>
+    <span id="conn">ONLINE</span>
+    <span id="user-badge" class="user-badge" hidden>
+      <span id="user-name"></span>
+      <button class="btn-ghost sm" id="logout-btn">sair</button>
+    </span>
+  </div>
+</header>
+
+<!-- tela de autenticação -->
+<div class="auth-screen" id="auth-screen" hidden>
+  <div class="auth-card">
+    <div class="logo big">◈</div>
+    <h2>CERT<span>FORGE</span></h2>
+    <p class="sub">acesso restrito · autentique-se</p>
+
+    <div class="tabs">
+      <button class="tab active" data-mode="login">Entrar</button>
+      <button class="tab" data-mode="register">Registrar</button>
+    </div>
+
+    <form id="auth-form">
+      <label>Usuário
+        <input name="username" required minlength="3" maxlength="60" autocomplete="username"/>
+      </label>
+      <label>Senha
+        <input name="password" type="password" required minlength="6" autocomplete="current-password"/>
+      </label>
+      <button type="submit" class="btn-primary" id="auth-submit">
+        <span>ENTRAR</span>
+      </button>
+      <div class="hint" id="auth-hint"></div>
+    </form>
+  </div>
+</div>
+
+<main class="grid" id="main" hidden>
+
+  <!-- painel esquerdo: formulário -->
+  <section class="card card-form">
+    <div class="card-head">
+      <span class="tag">01 · FORGE</span>
+      <h2>Novo Certificado</h2>
+    </div>
+
+    <form id="form">
+      <label>Nome comum (CN)
+        <input name="common_name" value="Usuário de Teste" required/>
+      </label>
+      <label>Organização (O)
+        <input name="organization" value="Organização Simulada" required/>
+      </label>
+      <div class="row">
+        <label>País (C)
+          <input name="country" value="BR" maxlength="2" required/>
+        </label>
+        <label>Estado (ST)
+          <input name="state" id="state" value="São Paulo" required/>
+        </label>
+      </div>
+      <label>Cidade (L)
+        <input name="locality" id="locality" value="São Paulo" required/>
+      </label>
+      <label>Tamanho da chave RSA
+        <select name="key_size">
+          <option value="2048" selected>2048 bits</option>
+          <option value="3072">3072 bits</option>
+          <option value="4096">4096 bits</option>
+          <option value="8192">8192 bits (lento)</option>
+        </select>
+      </label>
+
+      <div class="actions">
+        <button type="button" id="geo-btn" class="btn-ghost">⟟ detectar localização</button>
+        <button type="submit" class="btn-primary">
+          <span>GERAR CERTIFICADO</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="hint" id="geo-hint"></div>
+  </section>
+
+  <!-- painel direito: stats + lista -->
+  <section class="card card-stats">
+    <div class="card-head">
+      <span class="tag">02 · STATS</span>
+      <h2>Telemetria</h2>
+    </div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-val" id="stat-total">0</div>
+        <div class="stat-lbl">certificados emitidos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="stat-2048">0</div>
+        <div class="stat-lbl">2048 bits</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="stat-4096">0</div>
+        <div class="stat-lbl">4096+ bits</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card-list">
+    <div class="card-head">
+      <span class="tag">03 · VAULT</span>
+      <h2>Certificados Armazenados</h2>
+      <button class="btn-ghost" id="refresh-btn">↻ atualizar</button>
+    </div>
+    <div id="list" class="list"></div>
+  </section>
+
+</main>
+
+<!-- modal detalhe -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-panel">
+    <button class="modal-close" id="modal-close">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- toast -->
+<div id="toast" class="toast" hidden></div>
+
+<footer class="foot">
+  <span>◈ CERTFORGE v1.0</span>
+  <span>uso exclusivamente educacional</span>
+  <span>FastAPI · PostgreSQL · Debian</span>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
